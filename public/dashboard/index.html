@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TweetForge - Social Media Automation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            emerald: '#34d399',
+                            rose: '#fb7185',
+                            amber: '#fbbf24',
+                            blurple: '#5865F2',
+                            twitter: '#1DA1F2',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background: #020617; color: #f4f4f5; }
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        .stagger-4 { animation-delay: 0.4s; }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="max-w-7xl mx-auto p-8">
+        <!-- Header -->
+        <header class="flex items-center justify-between mb-8 animate-fade-in">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-brand-blurple rounded-xl flex items-center justify-center">
+                    <i data-lucide="flame" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold">TweetForge</h1>
+                    <p class="text-zinc-400 text-sm">Automated social media content generation</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 px-4 py-2 glass rounded-full border border-white/10">
+                    <div class="w-2 h-2 bg-brand-emerald rounded-full animate-pulse"></div>
+                    <span class="text-sm text-zinc-300">Online</span>
+                </div>
+                <span id="current-time" class="text-sm text-zinc-400"></span>
+            </div>
+        </header>
+
+        <!-- Stats Row -->
+        <div class="grid grid-cols-4 gap-6 mb-8">
+            <div class="glass rounded-2xl p-6 border border-white/5 animate-fade-in stagger-1">
+                <div class="flex items-center justify-between mb-4">
+                    <i data-lucide="file-text" class="w-5 h-5 text-brand-emerald"></i>
+                    <span class="text-xs text-brand-emerald">↑ 12%</span>
+                </div>
+                <p class="text-3xl font-bold" id="total-drafts">--</p>
+                <p class="text-zinc-400 text-sm mt-1">Total Drafts</p>
+            </div>
+            <div class="glass rounded-2xl p-6 border border-white/5 animate-fade-in stagger-2">
+                <div class="flex items-center justify-between mb-4">
+                    <i data-lucide="check-circle" class="w-5 h-5 text-brand-emerald"></i>
+                </div>
+                <p class="text-3xl font-bold" id="success-rate">--%</p>
+                <p class="text-zinc-400 text-sm mt-1">Success Rate</p>
+            </div>
+            <div class="glass rounded-2xl p-6 border border-white/5 animate-fade-in stagger-3">
+                <div class="flex items-center justify-between mb-4">
+                    <i data-lucide="clock" class="w-5 h-5 text-brand-amber"></i>
+                </div>
+                <p class="text-3xl font-bold" id="last-run">--</p>
+                <p class="text-zinc-400 text-sm mt-1">Last Run</p>
+            </div>
+            <div class="glass rounded-2xl p-6 border border-white/5 animate-fade-in stagger-4">
+                <div class="flex items-center justify-between mb-4">
+                    <i data-lucide="github" class="w-5 h-5 text-zinc-300"></i>
+                </div>
+                <p class="text-3xl font-bold" id="events-today">--</p>
+                <p class="text-zinc-400 text-sm mt-1">Events Today</p>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="grid grid-cols-3 gap-6">
+            <!-- Recent Drafts -->
+            <div class="col-span-2 glass rounded-2xl p-6 border border-white/5 animate-fade-in stagger-2">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-semibold">Recent Drafts</h2>
+                    <button id="trigger-btn" class="px-4 py-2 bg-brand-blurple hover:bg-opacity-80 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
+                        <i data-lucide="play" class="w-4 h-4"></i>
+                        Run Now
+                    </button>
+                </div>
+                <div id="drafts-list" class="space-y-4 max-h-96 overflow-y-auto">
+                    <p class="text-zinc-400 text-sm">Loading drafts...</p>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                <!-- Activity Feed -->
+                <div class="glass rounded-2xl p-6 border border-white/5">
+                    <h3 class="text-lg font-semibold mb-4">Activity Feed</h3>
+                    <div id="activity-feed" class="space-y-3 max-h-64 overflow-y-auto">
+                        <p class="text-zinc-400 text-sm">Loading activity...</p>
+                    </div>
+                </div>
+
+                <!-- System Health -->
+                <div class="glass rounded-2xl p-6 border border-white/5">
+                    <h3 class="text-lg font-semibold mb-4">System Health</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 bg-brand-emerald rounded-full animate-pulse"></div>
+                                <span class="text-sm">GitHub API</span>
+                            </div>
+                            <span class="text-xs text-zinc-400">Operational</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 bg-brand-emerald rounded-full animate-pulse"></div>
+                                <span class="text-sm">Hugging Face</span>
+                            </div>
+                            <span class="text-xs text-zinc-400">Operational</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 bg-brand-emerald rounded-full animate-pulse"></div>
+                                <span class="text-sm">Discord Webhook</span>
+                            </div>
+                            <span class="text-xs text-zinc-400">Operational</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-8 right-8 glass rounded-xl px-6 py-4 border border-white/10 hidden animate-fade-in">
+        <p class="text-sm font-medium" id="toast-message"></p>
+    </div>
+
+    <script src="/dashboard/app.js"></script>
+</body>
+</html>
