@@ -70,6 +70,10 @@ export class DiscordService {
     maxRetries: number,
   ): Promise<void> {
     const webhookUrl = this.configService.get<string>('DISCORD_WEBHOOK_URL');
+    if (!webhookUrl) {
+      this.logger.warn('Discord webhook URL not configured, skipping delivery');
+      return;
+    }
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {

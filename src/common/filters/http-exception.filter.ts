@@ -5,18 +5,18 @@ import {
   HttpException,
   HttpStatus,
   Logger,
+  Injectable,
+  Optional,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { DiscordService } from '../../discord/discord.service';
 
 @Catch()
+@Injectable()
 export class AllExceptionsFilter implements ExceptionFilter {
   private readonly logger = new Logger(AllExceptionsFilter.name);
-  private discordService?: DiscordService;
 
-  constructor(discordService?: DiscordService) {
-    this.discordService = discordService;
-  }
+  constructor(@Optional() private readonly discordService?: DiscordService) {}
 
   async catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
