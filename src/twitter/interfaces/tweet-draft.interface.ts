@@ -1,3 +1,5 @@
+import type { ParsedGitHubActivity } from '../../github/interfaces/github-event.interface';
+
 export interface TweetDraft {
   id: string;
   content: string;
