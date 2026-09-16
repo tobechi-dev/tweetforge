@@ -1,161 +1,338 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TweetForge - Social Media Automation</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TweetForge · Control Room</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            emerald: '#34d399',
-                            rose: '#fb7185',
-                            amber: '#fbbf24',
-                            blurple: '#5865F2',
-                            twitter: '#1DA1F2',
-                        }
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'system-ui', 'sans-serif'],
+              mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+            },
+            colors: {
+              ink: {
+                950: '#08090c',
+                900: '#0d0f14',
+                800: '#14171f',
+                700: '#1c2029',
+                600: '#262b36',
+              },
+              brand: {
+                emerald: '#34d399',
+                rose: '#fb7185',
+                amber: '#fbbf24',
+                sky: '#38bdf8',
+                blurple: '#5865F2',
+                twitter: '#1DA1F2',
+                muted: '#64748b',
+              },
+            },
+            boxShadow: {
+              glow: '0 0 0 1px rgba(255,255,255,0.04), 0 8px 32px -8px rgba(0,0,0,0.6)',
+            },
+          },
+        },
+      };
     </script>
     <style>
-        body { background: #020617; color: #f4f4f5; }
-        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); }
-        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .stagger-1 { animation-delay: 0.1s; }
-        .stagger-2 { animation-delay: 0.2s; }
-        .stagger-3 { animation-delay: 0.3s; }
-        .stagger-4 { animation-delay: 0.4s; }
+      html {
+        color-scheme: dark;
+      }
+      body {
+        background:
+          radial-gradient(
+            1200px 600px at 20% -10%,
+            rgba(88, 101, 242, 0.15),
+            transparent 60%
+          ),
+          radial-gradient(
+            900px 500px at 100% 0%,
+            rgba(29, 161, 242, 0.08),
+            transparent 55%
+          ),
+          #08090c;
+        font-feature-settings: 'cv11', 'ss01';
+      }
+      .panel {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.035),
+          rgba(255, 255, 255, 0.015)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(12px);
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, 0.03) inset,
+          0 12px 32px -16px rgba(0, 0, 0, 0.7);
+      }
+      .panel-hover {
+        transition:
+          border-color 0.2s ease,
+          transform 0.2s ease;
+      }
+      .panel-hover:hover {
+        border-color: rgba(255, 255, 255, 0.12);
+      }
+      .scroll-thin::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      .scroll-thin::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+      }
+      .scroll-thin::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.16);
+      }
+      .scroll-thin::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .fade-up {
+        animation: fadeUp 0.35s cubic-bezier(0.21, 0.98, 0.6, 0.99) both;
+      }
+      .stagger-1 {
+        animation-delay: 0.04s;
+      }
+      .stagger-2 {
+        animation-delay: 0.08s;
+      }
+      .stagger-3 {
+        animation-delay: 0.12s;
+      }
+      .stagger-4 {
+        animation-delay: 0.16s;
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 9999px;
+        position: relative;
+      }
+      .status-dot::after {
+        content: '';
+        position: absolute;
+        inset: -4px;
+        border-radius: 9999px;
+        background: currentColor;
+        opacity: 0.18;
+      }
+      .status-dot.ok {
+        color: #34d399;
+        background: #34d399;
+      }
+      .status-dot.warn {
+        color: #fbbf24;
+        background: #fbbf24;
+      }
+      .status-dot.err {
+        color: #fb7185;
+        background: #fb7185;
+      }
+      .status-dot.idle {
+        color: #64748b;
+        background: #64748b;
+      }
+      .status-dot.ok::after {
+        animation: pulse 2s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 0.18;
+        }
+        50% {
+          opacity: 0.35;
+        }
+      }
     </style>
-</head>
-<body class="min-h-screen">
-    <div class="max-w-7xl mx-auto p-8">
-        <!-- Header -->
-        <header class="flex items-center justify-between mb-8 animate-fade-in">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-brand-blurple rounded-xl flex items-center justify-center">
-                    <i data-lucide="flame" class="w-6 h-6 text-white"></i>
-                </div>
-                <div>
-                    <h1 class="text-3xl font-bold">TweetForge</h1>
-                    <p class="text-zinc-400 text-sm">Automated social media content generation</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-3">
-                <div class="flex items-center gap-2 px-4 py-2 glass rounded-full border border-white/10">
-                    <div class="w-2 h-2 bg-brand-emerald rounded-full animate-pulse"></div>
-                    <span class="text-sm text-zinc-300">Online</span>
-                </div>
-                <span id="current-time" class="text-sm text-zinc-400"></span>
-            </div>
-        </header>
-
-        <!-- Stats Row -->
-        <div class="grid grid-cols-4 gap-6 mb-8">
-            <div class="glass rounded-2xl p-6 border border-white/5 animate-fade-in stagger-1">
-                <div class="flex items-center justify-between mb-4">
-                    <i data-lucide="file-text" class="w-5 h-5 text-brand-emerald"></i>
-                    <span class="text-xs text-brand-emerald">↑ 12%</span>
-                </div>
-                <p class="text-3xl font-bold" id="total-drafts">--</p>
-                <p class="text-zinc-400 text-sm mt-1">Total Drafts</p>
-            </div>
-            <div class="glass rounded-2xl p-6 border border-white/5 animate-fade-in stagger-2">
-                <div class="flex items-center justify-between mb-4">
-                    <i data-lucide="check-circle" class="w-5 h-5 text-brand-emerald"></i>
-                </div>
-                <p class="text-3xl font-bold" id="success-rate">--%</p>
-                <p class="text-zinc-400 text-sm mt-1">Success Rate</p>
-            </div>
-            <div class="glass rounded-2xl p-6 border border-white/5 animate-fade-in stagger-3">
-                <div class="flex items-center justify-between mb-4">
-                    <i data-lucide="clock" class="w-5 h-5 text-brand-amber"></i>
-                </div>
-                <p class="text-3xl font-bold" id="last-run">--</p>
-                <p class="text-zinc-400 text-sm mt-1">Last Run</p>
-            </div>
-            <div class="glass rounded-2xl p-6 border border-white/5 animate-fade-in stagger-4">
-                <div class="flex items-center justify-between mb-4">
-                    <i data-lucide="github" class="w-5 h-5 text-zinc-300"></i>
-                </div>
-                <p class="text-3xl font-bold" id="events-today">--</p>
-                <p class="text-zinc-400 text-sm mt-1">Events Today</p>
-            </div>
+  </head>
+  <body class="min-h-screen text-zinc-100 antialiased">
+    <div class="max-w-7xl mx-auto px-6 py-8">
+      <!-- Header -->
+      <header class="flex items-center justify-between mb-8 fade-up">
+        <div class="flex items-center gap-4">
+          <div
+            class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-blurple to-brand-sky flex items-center justify-center shadow-glow"
+          >
+            <i data-lucide="flame" class="w-5 h-5 text-white"></i>
+          </div>
+          <div>
+            <h1 class="text-2xl font-semibold tracking-tight">TweetForge</h1>
+            <p class="text-zinc-500 text-sm">
+              Automated tweet generation from GitHub activity
+            </p>
+          </div>
         </div>
-
-        <!-- Main Content -->
-        <div class="grid grid-cols-3 gap-6">
-            <!-- Recent Drafts -->
-            <div class="col-span-2 glass rounded-2xl p-6 border border-white/5 animate-fade-in stagger-2">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-xl font-semibold">Recent Drafts</h2>
-                    <button id="trigger-btn" class="px-4 py-2 bg-brand-blurple hover:bg-opacity-80 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
-                        <i data-lucide="play" class="w-4 h-4"></i>
-                        Run Now
-                    </button>
-                </div>
-                <div id="drafts-list" class="space-y-4 max-h-96 overflow-y-auto">
-                    <p class="text-zinc-400 text-sm">Loading drafts...</p>
-                </div>
-            </div>
-
-            <!-- Sidebar -->
-            <div class="space-y-6">
-                <!-- Activity Feed -->
-                <div class="glass rounded-2xl p-6 border border-white/5">
-                    <h3 class="text-lg font-semibold mb-4">Activity Feed</h3>
-                    <div id="activity-feed" class="space-y-3 max-h-64 overflow-y-auto">
-                        <p class="text-zinc-400 text-sm">Loading activity...</p>
-                    </div>
-                </div>
-
-                <!-- System Health -->
-                <div class="glass rounded-2xl p-6 border border-white/5">
-                    <h3 class="text-lg font-semibold mb-4">System Health</h3>
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <div class="w-2 h-2 bg-brand-emerald rounded-full animate-pulse"></div>
-                                <span class="text-sm">GitHub API</span>
-                            </div>
-                            <span class="text-xs text-zinc-400">Operational</span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <div class="w-2 h-2 bg-brand-emerald rounded-full animate-pulse"></div>
-                                <span class="text-sm">Hugging Face</span>
-                            </div>
-                            <span class="text-xs text-zinc-400">Operational</span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <div class="w-2 h-2 bg-brand-emerald rounded-full animate-pulse"></div>
-                                <span class="text-sm">Discord Webhook</span>
-                            </div>
-                            <span class="text-xs text-zinc-400">Operational</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="flex items-center gap-3">
+          <div
+            class="flex items-center gap-2 px-3.5 py-1.5 panel rounded-full text-xs"
+          >
+            <div id="global-status-dot" class="status-dot idle"></div>
+            <span id="global-status-label" class="text-zinc-300"
+              >Checking…</span
+            >
+          </div>
+          <span
+            id="current-time"
+            class="text-xs text-zinc-500 font-mono tabular-nums"
+          ></span>
         </div>
+      </header>
+
+      <!-- Stats Row -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="panel panel-hover rounded-2xl p-5 fade-up stagger-1">
+          <div class="flex items-center justify-between mb-4">
+            <i data-lucide="file-text" class="w-4 h-4 text-brand-emerald"></i>
+            <span
+              id="drafts-delta"
+              class="text-[10px] uppercase tracking-wider text-zinc-500"
+              >Today</span
+            >
+          </div>
+          <p class="text-3xl font-semibold tabular-nums" id="total-drafts">—</p>
+          <p class="text-zinc-500 text-xs mt-1">Total drafts</p>
+        </div>
+        <div class="panel panel-hover rounded-2xl p-5 fade-up stagger-2">
+          <div class="flex items-center justify-between mb-4">
+            <i
+              data-lucide="check-circle"
+              class="w-4 h-4 text-brand-emerald"
+            ></i>
+          </div>
+          <p class="text-3xl font-semibold tabular-nums" id="success-rate">—</p>
+          <p class="text-zinc-500 text-xs mt-1">Success rate</p>
+        </div>
+        <div class="panel panel-hover rounded-2xl p-5 fade-up stagger-3">
+          <div class="flex items-center justify-between mb-4">
+            <i data-lucide="clock" class="w-4 h-4 text-brand-amber"></i>
+          </div>
+          <p class="text-3xl font-semibold" id="last-run">—</p>
+          <p class="text-zinc-500 text-xs mt-1">Last run</p>
+        </div>
+        <div class="panel panel-hover rounded-2xl p-5 fade-up stagger-4">
+          <div class="flex items-center justify-between mb-4">
+            <i data-lucide="github" class="w-4 h-4 text-zinc-300"></i>
+          </div>
+          <p class="text-3xl font-semibold tabular-nums" id="events-today">—</p>
+          <p class="text-zinc-500 text-xs mt-1">Events today</p>
+        </div>
+      </div>
+
+      <!-- Main grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Recent drafts -->
+        <section class="lg:col-span-2 panel rounded-2xl p-6 fade-up">
+          <div class="flex items-center justify-between mb-5">
+            <div>
+              <h2 class="text-lg font-semibold tracking-tight">
+                Recent drafts
+              </h2>
+              <p class="text-xs text-zinc-500 mt-0.5" id="drafts-subtitle">
+                Waiting for data…
+              </p>
+            </div>
+            <button
+              id="trigger-btn"
+              class="px-3.5 py-2 bg-brand-blurple hover:bg-[#6c78f5] active:bg-[#4b57e0] rounded-lg text-xs font-medium transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <i data-lucide="play" class="w-3.5 h-3.5"></i>
+              <span id="trigger-label">Run now</span>
+            </button>
+          </div>
+          <div
+            id="drafts-list"
+            class="space-y-3 max-h-[28rem] overflow-y-auto scroll-thin pr-1"
+          >
+            <div class="text-zinc-500 text-sm py-8 text-center">
+              Loading drafts…
+            </div>
+          </div>
+        </section>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+          <!-- Activity feed -->
+          <section class="panel rounded-2xl p-6 fade-up">
+            <h3 class="text-sm font-semibold tracking-tight mb-4">
+              Activity feed
+            </h3>
+            <div
+              id="activity-feed"
+              class="space-y-2 max-h-64 overflow-y-auto scroll-thin pr-1"
+            >
+              <div class="text-zinc-500 text-xs py-4 text-center">
+                Loading activity…
+              </div>
+            </div>
+          </section>
+
+          <!-- System health (REAL) -->
+          <section class="panel rounded-2xl p-6 fade-up">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-semibold tracking-tight">
+                System health
+              </h3>
+              <button
+                id="refresh-health"
+                class="text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-300 transition-colors"
+                title="Refresh health"
+              >
+                Refresh
+              </button>
+            </div>
+            <div id="health-list" class="space-y-3">
+              <!-- Rendered by JS from /api/health -->
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <footer
+        class="mt-10 flex items-center justify-between text-[11px] text-zinc-600"
+      >
+        <span>TweetForge · NestJS + HF + Discord</span>
+        <span id="build-info"></span>
+      </footer>
     </div>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-8 right-8 glass rounded-xl px-6 py-4 border border-white/10 hidden animate-fade-in">
-        <p class="text-sm font-medium" id="toast-message"></p>
+    <!-- Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 hidden fade-up">
+      <div
+        class="panel rounded-xl px-4 py-3 flex items-center gap-3 min-w-[240px]"
+      >
+        <i
+          id="toast-icon"
+          data-lucide="check-circle"
+          class="w-4 h-4 text-brand-emerald shrink-0"
+        ></i>
+        <p class="text-xs font-medium" id="toast-message">…</p>
+      </div>
     </div>
 
     <script src="/dashboard/app.js"></script>
-</body>
+  </body>
 </html>

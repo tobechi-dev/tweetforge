@@ -50,7 +50,7 @@ export class SchedulerService {
         return { success: true, message };
       }
 
-      const username = this.configService.get<string>('GITHUB_USERNAME');
+      const username = this.configService.get<string>('GITHUB_USERNAME') || 'developer';
       const drafts = await this.twitterService.generateTweets({
         activities,
         username,
