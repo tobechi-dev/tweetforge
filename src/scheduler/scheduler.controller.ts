@@ -26,11 +26,6 @@ export class SchedulerController {
     return this.schedulerService.getRecentActivity();
   }
 
-  @Get('health')
-  getHealth() {
-    return this.schedulerService.getHealth();
-  }
-
   @Post('drafts/:id/copy')
   async incrementCopyCount() {
     return { success: true };

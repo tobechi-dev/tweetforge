@@ -33,7 +33,11 @@ export class SchedulerService {
     await this.runPipeline();
   }
 
-  async runPipeline(): Promise<{ success: boolean; message: string; drafts?: TweetDraft[] }> {
+  async runPipeline(): Promise<{
+    success: boolean;
+    message: string;
+    drafts?: TweetDraft[];
+  }> {
     try {
       this.stats.totalRuns++;
       const startTime = Date.now();
@@ -50,7 +54,8 @@ export class SchedulerService {
         return { success: true, message };
       }
 
-      const username = this.configService.get<string>('GITHUB_USERNAME') || 'developer';
+      const username =
+        this.configService.get<string>('GITHUB_USERNAME') || 'developer';
       const drafts = await this.twitterService.generateTweets({
         activities,
         username,
@@ -65,7 +70,9 @@ export class SchedulerService {
       await this.discordService.sendDraftEmbed(drafts, activities);
 
       const duration = Date.now() - startTime;
-      this.logger.log(`Pipeline completed in ${duration}ms. Generated ${drafts.length} drafts.`);
+      this.logger.log(
+        `Pipeline completed in ${duration}ms. Generated ${drafts.length} drafts.`,
+      );
 
       return {
         success: true,
@@ -74,7 +81,10 @@ export class SchedulerService {
       };
     } catch (error) {
       this.logger.error('Pipeline failed', error);
-      await this.discordService.sendErrorNotification(error, 'Daily Draft Generation');
+      await this.discordService.sendErrorNotification(
+        error,
+        'Daily Draft Generation',
+      );
       return {
         success: false,
         message: `Pipeline failed: ${error.message}`,
@@ -102,14 +112,5 @@ export class SchedulerService {
 
   getRecentActivity() {
     return this.recentActivity;
-  }
-
-  getHealth() {
-    return {
-      github: true,
-      huggingface: true,
-      discord: true,
-      status: 'operational' as const,
-    };
   }
 }
