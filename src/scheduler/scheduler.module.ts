@@ -5,6 +5,7 @@ import { SchedulerController } from './scheduler.controller';
 import { GithubModule } from '../github/github.module';
 import { TwitterModule } from '../twitter/twitter.module';
 import { DiscordModule } from '../discord/discord.module';
+import { DraftsModule } from '../drafts/drafts.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { DiscordModule } from '../discord/discord.module';
     GithubModule,
     TwitterModule,
     DiscordModule,
+    DraftsModule,
   ],
   providers: [SchedulerService],
   controllers: [SchedulerController],

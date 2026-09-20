@@ -1,6 +1,5 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
-import { SchedulerService } from './scheduler.service';
-import { TweetDraft } from '../twitter/interfaces/tweet-draft.interface';
+import { SchedulerService } from './scheduler.service'
 
 @Controller('api')
 export class SchedulerController {
@@ -16,18 +15,9 @@ export class SchedulerController {
     return this.schedulerService.getStats();
   }
 
-  @Get('drafts')
-  getDrafts(): TweetDraft[] {
-    return this.schedulerService.getRecentDrafts();
-  }
-
   @Get('activity')
   getActivity() {
     return this.schedulerService.getRecentActivity();
   }
 
-  @Post('drafts/:id/copy')
-  async incrementCopyCount() {
-    return { success: true };
-  }
 }
