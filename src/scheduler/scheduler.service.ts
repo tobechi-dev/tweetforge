@@ -6,6 +6,7 @@ import { DiscordService } from '../discord/discord.service';
 import { ConfigService } from '@nestjs/config';
 import { TweetDraft } from '../twitter/interfaces/tweet-draft.interface';
 import { ParsedGitHubActivity } from '../github/interfaces/github-event.interface';
+import { DraftsService } from '../drafts/drafts.service';
 
 @Injectable()
 export class SchedulerService {
@@ -17,7 +18,7 @@ export class SchedulerService {
     lastRun: null as string | null,
     eventsToday: 0,
   };
-  private recentDrafts: TweetDraft[] = [];
+
   private recentActivity: ParsedGitHubActivity[] = [];
 
   constructor(
@@ -25,6 +26,7 @@ export class SchedulerService {
     private readonly twitterService: TwitterService,
     private readonly discordService: DiscordService,
     private readonly configService: ConfigService,
+    private readonly draftsService: DraftsService,
   ) {}
 
   @Cron(CronExpression.EVERY_DAY_AT_9AM)
@@ -65,7 +67,7 @@ export class SchedulerService {
       this.stats.successfulRuns++;
       this.stats.lastRun = new Date().toISOString();
 
-      this.recentDrafts = [...drafts, ...this.recentDrafts].slice(0, 10);
+      this.draftsService.store(drafts);
 
       await this.discordService.sendDraftEmbed(drafts, activities);
 
@@ -106,9 +108,6 @@ export class SchedulerService {
     };
   }
 
-  getRecentDrafts() {
-    return this.recentDrafts;
-  }
 
   getRecentActivity() {
     return this.recentActivity;
